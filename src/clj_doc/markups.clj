@@ -32,7 +32,8 @@
   "Define a markup using create-markup so that it can be found later by
   the markups function."
   [name & elements]
-  `(def ~(with-meta name {:type ::Markup})
+  `(def ~(with-meta name
+           (merge (meta name) {:type ::Markup}))
      (create-markup ~@elements)))
 
 (defn markup?
