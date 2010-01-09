@@ -53,12 +53,18 @@
   "Returns a string containing the documentation for the namespaces
   given formatted with the specified markup if available. The default
   output is formatted in HTML."
-  [output-markup & namespaces]
-  `(with-markup ~(list 'quote output-markup)
-     (gen-doc* ~@(map #(list 'quote %) namespaces))))
+  [& options-namespaces]
+  (let [options (first options-namespaces)
+        [options namespaces] (if (map? options)
+                               [options (rest options-namespaces)]
+                               [{}      options-namespaces])
+        {:keys [markup]} options
+        generate `(gen-doc* ~@(map #(list 'quote %) namespaces))]
+    (if markup
+      `(with-markup ~(list 'quote markup) ~generate)
+      generate)))
 
 (defmacro gen-doc-to-file
   "Same as gen-doc but output the documentation to the specified file."
-  [filename output-markup & namespaces]
-  `(spit ~filename (gen-doc ~output-markup
-                     ~@namespaces)))
+  [filename & options-namespaces]
+  `(spit ~filename (gen-doc ~@options-namespaces)))
