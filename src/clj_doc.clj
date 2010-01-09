@@ -20,7 +20,11 @@
 
 (def #^{:doc "List of available markups, which need a corresponding
   namespace."}
-  available-markups '[clj-doc.markups.html-simple])
+  available-markups
+  '[ clj-doc.markups.creole
+     clj-doc.markups.dokuwiki
+     clj-doc.markups.html-simple
+     clj-doc.markups.markdown ])
 
 (defn gen-doc*
   "Driver function for gen-doc. Needs its arguments to be quoted and
