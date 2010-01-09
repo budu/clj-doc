@@ -43,9 +43,7 @@
         d (:doc  m)]
     (str
       (gen :var-name (:name m))
-      (if d
-        (gen :var-doc d)
-        "No documentation found."))))
+      (gen :var-doc (or d "No documentation found.")))))
 
 (defn gen-namespace-doc
   "Generates documentation for the given namespace."
