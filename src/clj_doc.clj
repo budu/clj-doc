@@ -53,7 +53,7 @@
        (binding [*current-markup* mk#]
          ~@body))))
 
-(defn parse-options-namespaces
+(defn- parse-options-namespaces
   "Retrieves the option map and quotes its values. Also retrieves the
   list of namespaces and convert regular expressions to namespace list."
   [options-namespaces]
