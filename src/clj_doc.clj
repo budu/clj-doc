@@ -53,14 +53,6 @@
        (binding [*current-markup* mk#]
          ~@body))))
 
-(defn ->str
-  "Converts an object into a string or the objects contained in a
-  sequence."
-  [obj]
-  (if (seq? obj)
-    (map str obj)
-    (str obj)))
-
 (defmacro gen-doc
   "Returns a string containing the documentation for the namespaces
   given formatted with the specified markup if available. The default

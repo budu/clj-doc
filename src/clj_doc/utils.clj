@@ -28,6 +28,14 @@
   [filename]
   (map (partial append-to-filename filename) (iterate inc 0)))
 
+(defn ->str
+  "Converts an object into a string or the objects contained in a
+  sequence."
+  [obj]
+  (if (seq? obj)
+    (map str obj)
+    (str obj)))
+
 (defn self-eval?
   "Check whether the given form is self-evaluating."
   [obj]
