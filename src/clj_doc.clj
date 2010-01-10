@@ -14,7 +14,7 @@
   "This library provides the gen-doc and gen-doc-to-file macros and
   accompanying driver functions to generate documentation for Clojure
   code."
-  (use [clojure.contrib duck-streams]
+  (use [clojure.contrib duck-streams seq-utils]
        clj-doc.generator
        clj-doc.markups
        clj-doc.utils))
@@ -63,6 +63,9 @@
                                [options (rest options-namespaces)]
                                [{}      options-namespaces])
         {:keys [markup]} options
+        namespaces (flatten (map #(if (pattern? %)
+                                    (find-nss %)
+                                    %) namespaces))
         generate `(gen-doc* ~(quasiquote* options)
                     ~@(map #(list 'quote %) namespaces))]
     `(->str

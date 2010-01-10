@@ -75,3 +75,8 @@
   [ns-regex]
   (filter (comp (partial re-seq ns-regex) str)
     (find-namespaces-on-classpath)))
+
+(defn pattern?
+  "Check if the given argument is a Pattern instance."
+  [obj]
+  (= (class obj) java.util.regex.Pattern))
