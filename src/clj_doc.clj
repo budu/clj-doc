@@ -15,9 +15,9 @@
   accompanying driver functions to generate documentation for Clojure
   code."
   (use [clojure.contrib duck-streams]
-    clj-doc.generator
-    clj-doc.markups
-    clj-doc.utils))
+       clj-doc.generator
+       clj-doc.markups
+       clj-doc.utils))
 
 (def #^{:doc "List of available markups, which need a corresponding
   namespace."}
@@ -38,11 +38,10 @@
         {:keys [separated-by]} options]
     (let [gen-page #(gen-if :page [%1 %2] %2)
           results (map gen-namespace-doc nss)]
-      (if (= separated-by 'namespace)
-        (doall (map #(let [title (default-title %1)]
-                       (gen-page title
-                         (str (gen :title title) %2))) nss results))
-        (gen-page title (apply str (gen :title title) results))))))
+      (doall (apply map #(gen-page %1 (str (gen :title %1) %2))
+               (if (= separated-by 'namespace)
+                 [(map default-title nss) results]
+                 [(repeat title) [(apply str results)]]))))))
 
 (defmacro with-markup
   "Makes the given markup the current one."
@@ -82,4 +81,8 @@
 (defmacro gen-doc-to-file
   "Same as gen-doc but output the documentation to the specified file."
   [filename & options-namespaces]
-  `(spit ~filename (gen-doc ~@options-namespaces)))
+  `(let [results# (gen-doc ~@options-namespaces)]
+     (if (= 1 (count results#))
+       (spit ~filename (first results#))
+       (doseq [[filename# page#] (zipmap (numbered-filenames ~filename) results#)]
+         (spit filename# page#)))))

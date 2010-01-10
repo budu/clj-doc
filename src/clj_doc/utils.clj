@@ -11,7 +11,22 @@
 ;;;;  You must not remove this notice, or any other, from this software.
 
 (ns clj-doc.utils
-  "Various utilities used by clj-doc.")
+  "Various utilities used by clj-doc."
+  (use [clojure.contrib str-utils]))
+
+(defn append-to-filename
+  "Takes a file name and append the string representation of the given
+  object before the last dot or at the end if there's none."
+  [filename obj]
+  (if (.contains filename ".")
+    (re-gsub #"(\.)([^\.]*$)" (str obj ".$2") filename)
+    (str filename obj)))
+
+(defn numbered-filenames
+  "Returns an infinite list of filename based on the one given, numbered
+  starting with zero."
+  [filename]
+  (map (partial append-to-filename filename) (iterate inc 0)))
 
 (defn self-eval?
   "Check whether the given form is self-evaluating."
