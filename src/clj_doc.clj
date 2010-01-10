@@ -84,5 +84,6 @@
   `(let [results# (gen-doc ~@options-namespaces)]
      (if (= 1 (count results#))
        (spit ~filename (first results#))
-       (doseq [[filename# page#] (zipmap (numbered-filenames ~filename) results#)]
+       (doseq [[filename# page#]
+                (zipmap (numbered-filenames ~filename) results#)]
          (spit filename# page#)))))
