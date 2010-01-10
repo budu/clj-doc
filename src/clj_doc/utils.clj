@@ -12,7 +12,7 @@
 
 (ns clj-doc.utils
   "Various utilities used by clj-doc."
-  (use [clojure.contrib str-utils]))
+  (use [clojure.contrib find-namespaces str-utils]))
 
 (defn append-to-filename
   "Takes a file name and append the string representation of the given
@@ -69,3 +69,9 @@
   Example: (let [x 5] (quasiquote (+ ~x 6))) => (+ 5 6)"
   [form]
   (quasiquote* form))
+
+(defn find-nss
+  "Takes a regex and returns all matching namespaces."
+  [ns-regex]
+  (filter (comp (partial re-seq ns-regex) str)
+    (find-namespaces-on-classpath)))
