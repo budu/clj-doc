@@ -59,8 +59,9 @@
   [options-namespaces]
   (let [options (first options-namespaces)
         [options namespaces] (if (map? options)
-                               [options (rest options-namespaces)]
-                               [{}      options-namespaces])
+                               [ (quasiquote* options)
+                                 (rest options-namespaces) ]
+                               [ {}      options-namespaces ])
         namespaces (flatten (map #(if (pattern? %)
                                     (find-nss %)
                                     %) namespaces))]
@@ -74,7 +75,7 @@
   (let [[options namespaces] (parse-options-namespaces
                                options-namespaces)
         {:keys [markup]} options
-        generate `(gen-doc* ~(quasiquote* options)
+        generate `(gen-doc* ~options
                     ~@(map #(list 'quote %) namespaces))]
     `(->str
        ~(if markup
