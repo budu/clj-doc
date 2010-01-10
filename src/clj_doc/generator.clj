@@ -51,4 +51,6 @@
   [namespace]
   (require (symbol namespace))
   (let [interns (ns-interns (symbol namespace))]
-    (apply str (map gen-var-doc (vals interns)))))
+    (apply str
+      (gen :namespace namespace)
+      (map gen-var-doc (vals interns)))))
