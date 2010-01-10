@@ -49,7 +49,8 @@
   [mk & body]
   `(do
      (apply use available-markups)
-     (let [mk# ((apply find-markups available-markups) ~(list 'quote mk))]
+     (let [mk# ((apply find-markups available-markups)
+                 ~(list 'quote mk))]
        (binding [*current-markup* mk#]
          ~@body))))
 
