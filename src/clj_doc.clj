@@ -53,19 +53,27 @@
        (binding [*current-markup* mk#]
          ~@body))))
 
+(defn parse-options-namespaces
+  "Retrieves the option map and quotes its values. Also retrieves the
+  list of namespaces and convert regular expressions to namespace list."
+  [options-namespaces]
+  (let [options (first options-namespaces)
+        [options namespaces] (if (map? options)
+                               [options (rest options-namespaces)]
+                               [{}      options-namespaces])
+        namespaces (flatten (map #(if (pattern? %)
+                                    (find-nss %)
+                                    %) namespaces))]
+    [ options namespaces ]))
+
 (defmacro gen-doc
   "Returns a string containing the documentation for the namespaces
   given formatted with the specified markup if available. The default
   output is formatted in HTML."
   [& options-namespaces]
-  (let [options (first options-namespaces)
-        [options namespaces] (if (map? options)
-                               [options (rest options-namespaces)]
-                               [{}      options-namespaces])
+  (let [[options namespaces] (parse-options-namespaces
+                               options-namespaces)
         {:keys [markup]} options
-        namespaces (flatten (map #(if (pattern? %)
-                                    (find-nss %)
-                                    %) namespaces))
         generate `(gen-doc* ~(quasiquote* options)
                     ~@(map #(list 'quote %) namespaces))]
     `(->str
