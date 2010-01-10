@@ -61,7 +61,7 @@
         [options namespaces] (if (map? options)
                                [ (quasiquote* options)
                                  (rest options-namespaces) ]
-                               [ {}      options-namespaces ])
+                               [ {} options-namespaces ])
         namespaces (flatten (map #(if (pattern? %)
                                     (find-nss %)
                                     %) namespaces))]
