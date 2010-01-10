@@ -16,7 +16,8 @@
   code."
   (use [clojure.contrib duck-streams]
     clj-doc.generator
-    clj-doc.markups))
+    clj-doc.markups
+    clj-doc.utils))
 
 (def #^{:doc "List of available markups, which need a corresponding
   namespace."}
@@ -26,26 +27,29 @@
      clj-doc.markups.html-simple
      clj-doc.markups.markdown ])
 
+(defn default-title [& args]
+  (apply str "Documentation for " (interpose ", " args)))
+
 (defn gen-doc*
   "Driver function for gen-doc. Needs its arguments to be quoted and
   must be enclosed within an with-markup call."
-  [& nss]
-  (let [title (apply str "Documentation for " (interpose ", " nss))]
-    (let [content (apply str
-                    (gen :title title)
-                    (interleave
-                      (map (partial gen :namespace) nss)
-                      (map gen-namespace-doc nss)))]
-      (gen-if :page
-        [title content]
-        content))))
+  [options & nss]
+  (let [title (apply default-title nss)
+        {:keys [separated-by]} options]
+    (let [gen-page #(gen-if :page [%1 %2] %2)
+          results (map gen-namespace-doc nss)]
+      (if (= separated-by 'namespace)
+        (doall (map #(let [title (default-title %1)]
+                       (gen-page title
+                         (str (gen :title title) %2))) nss results))
+        (gen-page title (apply str (gen :title title) results))))))
 
 (defmacro with-markup
   "Makes the given markup the current one."
   [mk & body]
   `(do
      (apply use available-markups)
-     (let [mk# ((apply find-markups available-markups) ~mk)]
+     (let [mk# ((apply find-markups available-markups) ~(list 'quote mk))]
        (binding [*current-markup* mk#]
          ~@body))))
 
@@ -59,9 +63,10 @@
                                [options (rest options-namespaces)]
                                [{}      options-namespaces])
         {:keys [markup]} options
-        generate `(gen-doc* ~@(map #(list 'quote %) namespaces))]
+        generate `(gen-doc* ~(quasiquote* options)
+                    ~@(map #(list 'quote %) namespaces))]
     (if markup
-      `(with-markup ~(list 'quote markup) ~generate)
+      `(with-markup ~markup ~generate)
       generate)))
 
 (defmacro gen-doc-to-file
