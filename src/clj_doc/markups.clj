@@ -13,7 +13,8 @@
 (ns clj-doc.markups
   "This namespace contains all functions needed to build and find
   markups."
-  (require [clojure.contrib.ns-utils :as ns-utils]))
+  (use [clojure.contrib seq-utils]
+       clj-doc.utils))
 
 (defstruct #^{:doc "Struct to contains markup element generators."}
   markup
@@ -39,18 +40,24 @@
 (defn markup?
   "Returns true if the given var is a markup."
   [var]
-  (= ((comp type resolve) var)
-    ::Markup))
+  (= (type var) ::Markup))
 
 (defn find-markups
-  "Returns a map of all markups found in the current namespace, keyed by
-  their names, if there no arguments. Else search in the given
+  "Returns a sequence of vars for all markups found in the current
+  namespace if there's no arguments, else search in the given
   namespaces."
   [& nss]
-  (let [mks (apply concat
-              (map #(filter markup? (ns-utils/ns-vars %))
-                (if (empty? nss) [*ns*] nss)))]
-    (zipmap mks (map eval mks))))
+  (apply require nss)
+  (apply concat
+    (map #(filter markup? (vals (ns-interns %)))
+      (if (empty? nss) [*ns*] nss))))
+
+(def #^{:doc "List of available markups."}
+  available-markups
+  (let [mks (apply find-markups
+              (find-nss #"^clj-doc\.markups\..*"))]
+    (apply hash-map
+      (flatten (map #(vector (.sym %) (.get %)) mks)))))
 
 (defmethod print-method
   ::Markup

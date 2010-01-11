@@ -19,27 +19,20 @@
        clj-doc.markups
        clj-doc.utils))
 
-(def #^{:doc "List of available markups."}
-  available-markups
-  (find-nss #"^clj-doc\.markups\..*"))
-
 (defn gen-doc*
   "Driver function for gen-doc. Needs its arguments to be quoted and
   must be enclosed within an with-markup call."
   [options & nss]
   (let [{:keys [separated-by]} options
         nss (if (= separated-by 'namespace) (flatten nss) nss)]
-    (map gen-page nss)))
+    (doall (map gen-page nss))))
 
 (defmacro with-markup
   "Makes the given markup the current one."
   [mk & body]
-  `(do
-     (apply require available-markups)
-     (let [mk# ((apply find-markups available-markups)
-                 ~(list 'quote mk))]
-       (binding [*current-markup* mk#]
-         ~@body))))
+  `(let [mk# (available-markups ~(list 'quote mk))]
+     (binding [*current-markup* mk#]
+       ~@body)))
 
 (defn- parse-options-namespaces
   "Retrieves the option map and quotes its values. Also retrieves the
@@ -47,9 +40,8 @@
   [options-namespaces]
   (let [options (first options-namespaces)
         [options namespaces] (if (map? options)
-                               [ (quasiquote* options)
-                                 (rest options-namespaces) ]
-                               [ {} options-namespaces ])
+                               [options (rest options-namespaces)]
+                               [{}      options-namespaces])
         namespaces (map #(if (pattern? %)
                            (find-nss %)
                            %) namespaces)]
@@ -63,7 +55,7 @@
   (let [[options namespaces] (parse-options-namespaces
                                options-namespaces)
         {:keys [markup]} options
-        generate `(gen-doc* ~options
+        generate `(gen-doc* ~(quasiquote* options)
                     ~@(map #(list 'quote %) namespaces))]
     `(->str
        ~(if markup
