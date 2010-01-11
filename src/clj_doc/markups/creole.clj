@@ -17,7 +17,8 @@
 (defmarkup
   #^{:doc "Creole markup."}
   creole
-  :title        #(str "\n= "   %   " =")
-  :namespace    #(str "\n== "  %  " ==")
-  :var-name     #(str "\n=== " % " ===")
+  :title        #(str "\n= "    %    " =")
+  :namespace    #(str "\n== "   %   " ==")
+  :var-name     #(str "\n=== "  %  " ===")
+  :var-arglists #(str "\n==== " % " ====")
   :var-doc      #(str "\n" %))

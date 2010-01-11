@@ -55,6 +55,7 @@
         d (:doc  m)]
     (str
       (gen :var-name (gen-var-name m))
+      (when (:arglists m) (gen :var-arglists (:arglists m)))
       (gen :var-doc (or d "No documentation found.")))))
 
 (defn gen-namespace-doc
