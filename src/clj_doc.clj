@@ -23,21 +23,13 @@
   available-markups
   (find-nss #"^clj-doc\.markups\..*"))
 
-(defn default-title [& args]
-  (apply str "Documentation for " (interpose ", " args)))
-
 (defn gen-doc*
   "Driver function for gen-doc. Needs its arguments to be quoted and
   must be enclosed within an with-markup call."
   [options & nss]
-  (let [title (apply default-title nss)
-        {:keys [separated-by]} options]
-    (let [gen-page #(gen-if :page [%1 %2] %2)
-          results (map gen-namespace-doc nss)]
-      (doall (apply map #(gen-page %1 (str (gen :title %1) %2))
-               (if (= separated-by 'namespace)
-                 [(map default-title nss) results]
-                 [(repeat title) [(apply str results)]]))))))
+  (let [{:keys [separated-by]} options
+        nss (if (= separated-by 'namespace) (flatten nss) nss)]
+    (map gen-page nss)))
 
 (defmacro with-markup
   "Makes the given markup the current one."
@@ -58,9 +50,9 @@
                                [ (quasiquote* options)
                                  (rest options-namespaces) ]
                                [ {} options-namespaces ])
-        namespaces (flatten (map #(if (pattern? %)
-                                    (find-nss %)
-                                    %) namespaces))]
+        namespaces (map #(if (pattern? %)
+                           (find-nss %)
+                           %) namespaces)]
     [ options namespaces ]))
 
 (defmacro gen-doc
