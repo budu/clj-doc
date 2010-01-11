@@ -65,7 +65,8 @@
   (let [interns (ns-interns (symbol namespace))]
     (apply str
       (gen :namespace namespace)
-      (map gen-var-doc (vals interns)))))
+      (map gen-var-doc
+        (sort-by #(.sym %) (vals interns))))))
 
 (defn default-title
   "Returns a nice title for a given set of arguments."
