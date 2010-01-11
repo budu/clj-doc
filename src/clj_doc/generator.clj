@@ -37,13 +37,24 @@
       (apply gen element args)
       default)))
 
+(defn gen-var-name
+  "Generate a qualified var name given its metadata."
+  [m]
+  (str (:name m)
+    (cond
+      (= (:tag m) clojure.lang.MultiFn) " multimethod"
+      (:arglists m) (if (:macro m)
+                      " macro"
+                      (str (when (:inline m) " inline")
+                        " function")))))
+
 (defn gen-var-doc
   "Generates documentation for the given var."
   [var]
   (let [m (meta var)
         d (:doc  m)]
     (str
-      (gen :var-name (:name m))
+      (gen :var-name (gen-var-name m))
       (gen :var-doc (or d "No documentation found.")))))
 
 (defn gen-namespace-doc
