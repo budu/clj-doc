@@ -24,11 +24,20 @@
       [:head [:title title]]
       [:body content]]))
 
+(defn html-ns-toc
+  "Generator the namespace table of content."
+  [& nss]
+  (html [:div#ns-toc
+          (interpose ", "
+            (map #(html (link-to (str "#" %) %)) nss))]))
+
 (defmarkup
   #^{:doc "Simple HTML markup."}
   html-simple
   :page         html-simple-page
   :title        #(html [:h1 (escape-html %)])
+  :ns-toc       html-ns-toc
+  :ns-anchor    #(html [:a {:id (escape-html %)}])
   :namespace    #(html [:h2 (escape-html %)])
   :var-name     #(html [:h3 (escape-html %)])
   :var-arglists #(html [:h4 (escape-html %)])

@@ -37,6 +37,11 @@
       (apply gen element args)
       default)))
 
+(defn gen-when
+  "Like gen-if but returns nil if the generator isn't found."
+  [element & args]
+  (gen-if element args nil))
+
 (defn gen-var-name
   "Generate a qualified var name given its metadata."
   [m]
@@ -64,6 +69,7 @@
   (require (symbol namespace))
   (let [interns (ns-interns (symbol namespace))]
     (apply str
+      (gen-when :ns-anchor namespace)
       (gen :namespace namespace)
       (map gen-var-doc
         (sort-by #(.sym %) (vals interns))))))
@@ -80,6 +86,8 @@
         title (apply default-title nss)
         content (apply str
                   (gen :title title)
+                  (when (> (count nss) 1)
+                    (apply gen-when :ns-toc nss))
                   (map gen-namespace-doc nss))]
     (gen-if :page
       [title content]
