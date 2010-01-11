@@ -30,7 +30,7 @@
 (defmacro with-markup
   "Makes the given markup the current one."
   [mk & body]
-  `(let [mk# (available-markups ~(list 'quote mk))]
+  `(let [mk# ((get-available-markups) ~(list 'quote mk))]
      (binding [*current-markup* mk#]
        ~@body)))
 

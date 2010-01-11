@@ -52,8 +52,9 @@
     (map #(filter markup? (vals (ns-interns %)))
       (if (empty? nss) [*ns*] nss))))
 
-(def #^{:doc "List of available markups."}
-  available-markups
+(defn get-available-markups
+  "Lists available markups."
+  []
   (let [mks (apply find-markups
               (find-nss #"^clj-doc\.markups\..*"))]
     (apply hash-map
