@@ -19,13 +19,9 @@
        clj-doc.markups
        clj-doc.utils))
 
-(def #^{:doc "List of available markups, which need a corresponding
-  namespace."}
+(def #^{:doc "List of available markups."}
   available-markups
-  '[ clj-doc.markups.creole
-     clj-doc.markups.dokuwiki
-     clj-doc.markups.html-simple
-     clj-doc.markups.markdown ])
+  (find-nss #"^clj-doc\.markups\..*"))
 
 (defn default-title [& args]
   (apply str "Documentation for " (interpose ", " args)))
@@ -47,7 +43,7 @@
   "Makes the given markup the current one."
   [mk & body]
   `(do
-     (apply use available-markups)
+     (apply require available-markups)
      (let [mk# ((apply find-markups available-markups)
                  ~(list 'quote mk))]
        (binding [*current-markup* mk#]
