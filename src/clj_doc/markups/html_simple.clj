@@ -39,6 +39,7 @@
   :ns-toc       html-ns-toc
   :ns-anchor    #(html [:a {:id (escape-html %)}])
   :namespace    #(html [:h2 (escape-html %)])
-  :var-name     #(html [:h3 (escape-html %)])
-  :var-arglists #(html [:h4 (escape-html %)])
+  :section      #(html [:h3 (escape-html %1)] [:div %2])
+  :var-name     #(html [:h4 (escape-html %)])
+  :var-arglists #(html [:h5 (escape-html %)])
   :var-doc      #(html [:p (escape-html %)]))

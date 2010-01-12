@@ -92,11 +92,15 @@
   [namespace]
   (require (symbol namespace))
   (let [vars (vals (ns-interns (symbol namespace)))
-        vars (group-by var-type vars)]
+        grouped-vars (group-by var-type vars)]
     (apply str
       (gen-when :ns-anchor namespace)
       (gen :namespace (str namespace " namespace"))
-      (map gen-var-doc (apply concat (vals vars))))))
+      (map (fn [[type vars]]
+             (let [content (apply str (map gen-var-doc vars))]
+               (gen-if :section
+                 [(subs (str type "s") 1) content]
+                 content))) grouped-vars))))
 
 (defn default-title
   "Returns a nice title for a given set of arguments."
