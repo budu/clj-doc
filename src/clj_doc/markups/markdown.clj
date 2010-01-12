@@ -19,6 +19,7 @@
   markdown
   :title        #(str "\n#" %)
   :namespace    #(str "\n##" %)
-  :var-name     #(str "\n###" %)
-  :var-arglists #(str "\n####" %)
+  :section      #(str "\n### " %1 "\n" %2)
+  :var-name     #(str "\n####" %)
+  :var-arglists #(str "\n#####" %)
   :var-doc      #(str "\n" %))
