@@ -13,7 +13,8 @@
 (ns clj-doc.generator
   "This namespace contains all parts to make a generic documentation
   generator for Clojure code."
-  (use clj-doc.markups.html-simple))
+  (use [clojure.contrib seq-utils]
+       clj-doc.markups.html-simple))
 
 (def #^{:doc "The default markup to be used if none specified."}
   default-markup html-simple)
@@ -43,9 +44,8 @@
   (gen-if element args nil))
 
 (defn var-type
-  "Returns a keyword identifying what kind of var is the one given, else
-  its tag or if missing the class of its value. Supports the following
-  keywords: :function, :inline-function, :macro and :multimethod."
+  "Like explicit-var-type but returns :other instead of var's tag or
+  value class."
   [var]
   (let [m (meta var)]
     (cond
@@ -55,6 +55,17 @@
                       (if (:inline m)
                         :inline-function
                         :function))
+      :default :other)))
+
+(defn explicit-var-type
+  "Returns a keyword identifying what kind of var is the one given, else
+  its tag or if missing the class of its value. Supports the following
+  keywords: :function, :inline-function, :macro and :multimethod."
+  [var]
+  (let [m (meta var)
+        t (var-type var)]
+    (cond
+      (not= t :other) t
       (:tag m) (:tag m)
       :default (class (var-get var)))))
 
@@ -63,7 +74,7 @@
   [var]
   (let [t (var-type var)]
     (str (:name (meta var))
-      (when (keyword? t)
+      (when (not= t :other)
         (.replaceAll (str " " t) ":|-" "")))))
 
 (defn gen-var-doc
@@ -80,12 +91,12 @@
   "Generates documentation for the given namespace."
   [namespace]
   (require (symbol namespace))
-  (let [interns (ns-interns (symbol namespace))]
+  (let [vars (vals (ns-interns (symbol namespace)))
+        vars (group-by var-type vars)]
     (apply str
       (gen-when :ns-anchor namespace)
       (gen :namespace (str namespace " namespace"))
-      (map gen-var-doc
-        (sort-by #(.sym %) (vals interns))))))
+      (map gen-var-doc (apply concat (vals vars))))))
 
 (defn default-title
   "Returns a nice title for a given set of arguments."
