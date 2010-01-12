@@ -3,10 +3,11 @@ clj-doc
 -------
 
 This is a library to help generate documentation from Clojure code to
-various kind of output formats. It's output can be customized, output to
-multiple files and can search for namespace using regular expressions.
+various kind of output formats. Its output can be customized, it can
+output to multiple files and search for namespace using regular
+expressions.
 
-The current supported output formats are:
+The currently supported output formats are:
 
 * Simple HTML
 * Markdown
@@ -28,13 +29,26 @@ symbols.
     user> (use 'clj-doc)
     user> (gen-doc clj-doc.markups.markdown)
 
-#### More Complex One
+#### More Complex Ones
+
+Create one file for each one of clj-doc's markup namespaces in files
+test0.txt to test3.txt.
 
     user> (gen-doc-to-file
             "test.txt"
             {:markup creole
              :separated-by namespace}
             #"clj-doc\.markups\.")
+
+Creates two files, named test0.markdown and test1.markdown, one
+including all documentation for clj-doc without markdown and
+html-simple, the other with these two namespaces only.
+
+    user> (gen-doc-to-file
+            "g:/test.markdown"
+            {:markup markdown}
+            #"(?=clj-doc)(?=(?!.*markdown))(?=(?!.*html-simple))"
+            [clj-doc.markups.markdown clj-doc.markups.html-simple])
 
 ----
 
