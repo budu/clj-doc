@@ -50,7 +50,7 @@ including all documentation for clj-doc without markdown and
 html-simple, the other with these two namespaces only.
 
     user> (gen-doc-to-file
-            "g:/test.markdown"
+            "test.markdown"
             {:markup markdown}
             #"(?=clj-doc)(?=(?!.*markdown))(?=(?!.*html-simple))"
             [clj-doc.markups.markdown clj-doc.markups.html-simple])
