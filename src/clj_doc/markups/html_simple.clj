@@ -41,5 +41,5 @@
   :namespace    #(html [:h2 (escape-html %)])
   :section      #(html [:h3 (escape-html %1)] [:div %2])
   :var-name     #(html [:h4 (escape-html %)])
-  :var-arglists #(html [:h5 (escape-html %)])
+  :var-arglist  #(html [:span (escape-html %)] [:br])
   :var-doc      #(html [:p (escape-html %)]))

@@ -21,5 +21,5 @@
   :namespace    #(str "\n== "    %    " ==")
   :section      #(str "\n=== "   %1  " ===\n" %2)
   :var-name     #(str "\n==== "  %  " ====")
-  :var-arglists #(str "\n===== " % " =====")
-  :var-doc      #(str "\n" %))
+  :var-arglist  #(str "\n**" % "**\\\\")
+  :var-doc      #(str "\n\n" %))
