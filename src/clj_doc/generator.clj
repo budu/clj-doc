@@ -42,16 +42,29 @@
   [element & args]
   (gen-if element args nil))
 
-(defn gen-var-name
-  "Generate a qualified var name given its metadata."
-  [m]
-  (str (:name m)
+(defn var-type
+  "Returns a keyword identifying what kind of var is the one given, else
+  its tag or if missing the class of its value. Supports the following
+  keywords: :function, :inline-function, :macro and :multimethod."
+  [var]
+  (let [m (meta var)]
     (cond
-      (= (:tag m) clojure.lang.MultiFn) " multimethod"
+      (= (:tag m) clojure.lang.MultiFn) :multimethod
       (:arglists m) (if (:macro m)
-                      " macro"
-                      (str (when (:inline m) " inline")
-                        " function")))))
+                      :macro
+                      (if (:inline m)
+                        :inline-function
+                        :function))
+      (:tag m) (:tag m)
+      :default (class (var-get var)))))
+
+(defn gen-var-name
+  "Generate a qualified var name."
+  [var]
+  (let [t (var-type var)]
+    (str (:name (meta var))
+      (when (keyword? t)
+        (.replaceAll (str " " t) ":|-" "")))))
 
 (defn gen-var-doc
   "Generates documentation for the given var."
@@ -59,7 +72,7 @@
   (let [m (meta var)
         d (:doc  m)]
     (str
-      (gen :var-name (gen-var-name m))
+      (gen :var-name (gen-var-name var))
       (when (:arglists m) (gen :var-arglists (:arglists m)))
       (gen :var-doc (or d "No documentation found.")))))
 
