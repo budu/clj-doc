@@ -24,7 +24,12 @@ symbols.
 
 ### Examples
 
+Here's some examples to makes things clearer.
+
 #### Simple Usage
+
+Load clj-doc and generate documentation for the clj-doc.markups.markdown
+namespace using the default markup which is html-simple.
 
     user> (use 'clj-doc)
     user> (gen-doc clj-doc.markups.markdown)
