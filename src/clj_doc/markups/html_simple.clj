@@ -25,7 +25,7 @@
       [:body content]]))
 
 (defn encode-id-char [c]
-  (if (re-seq #"[\w-_]" (str c))
+  (if (re-seq #"[\w-_\.]" (str c))
     c
     (str "." (int c))))
 
