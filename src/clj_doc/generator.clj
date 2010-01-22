@@ -83,6 +83,7 @@
   (let [m (meta var)
         d (:doc  m)]
     (str
+      (gen-when :anchor (.sym var))
       (gen :var-name (gen-var-name var))
       (when (:arglists m)
         (apply str
@@ -101,7 +102,7 @@
   (let [vars (vals (ns-interns (symbol namespace)))
         grouped-vars (group-by var-type vars)]
     (apply str
-      (gen-when :ns-anchor namespace)
+      (gen-when :anchor namespace)
       (gen :namespace (str namespace " namespace"))
       (map (fn [[type vars]]
              (let [content (apply str (map gen-var-doc vars))]
