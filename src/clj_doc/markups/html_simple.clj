@@ -35,7 +35,7 @@
 
 (defn html-ns-toc
   "Generator the namespace table of content."
-  [& nss]
+  [nss]
   (html [:div#ns-toc
           (interpose ", "
             (map #(html (link-to (str "#" (encode-id %)) %)) nss))]))
