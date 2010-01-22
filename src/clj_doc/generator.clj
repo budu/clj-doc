@@ -89,6 +89,11 @@
           (map (partial gen :var-arglist) (:arglists m))))
       (gen :var-doc (or d "No documentation found.")))))
 
+(defn section-title
+  "Returns the given keyword name pluralized."
+  [k]
+  (str (name k) "s"))
+
 (defn gen-namespace-doc
   "Generates documentation for the given namespace."
   [namespace]
@@ -101,7 +106,7 @@
       (map (fn [[type vars]]
              (let [content (apply str (map gen-var-doc vars))]
                (gen-if :section
-                 [(subs (str type "s") 1) content]
+                 [(section-title type) content]
                  content))) grouped-vars))))
 
 (defn default-title
