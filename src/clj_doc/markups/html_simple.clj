@@ -31,6 +31,14 @@
           (interpose ", "
             (map #(html (link-to (str "#" %) %)) nss))]))
 
+(defn html-section-toc
+  "Generator the section table of content."
+  [vars]
+  (html [:div.section-toc
+          (interpose ", "
+            (map #(let [n (escape-html (name (.sym %)))]
+                    html (link-to (str "#" n) n)) vars))]))
+
 (defmarkup
   #^{:doc "Simple HTML markup."}
   html-simple
@@ -39,6 +47,7 @@
   :ns-toc       html-ns-toc
   :ns-anchor    #(html [:a {:id (escape-html %)}])
   :namespace    #(html [:h2 (escape-html %)])
+  :section-toc  html-section-toc
   :section      #(html [:h3 (escape-html %1)] [:div %2])
   :var-name     #(html [:h4 (escape-html %)])
   :var-arglist  #(html [:span (escape-html %)] [:br])

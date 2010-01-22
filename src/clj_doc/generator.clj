@@ -106,7 +106,8 @@
       (map (fn [[type vars]]
              (let [content (apply str (map gen-var-doc vars))]
                (gen-if :section
-                 [(section-title type) content]
+                 [ (section-title type)
+                   (str (gen-when :section-toc vars) content) ]
                  content))) grouped-vars))))
 
 (defn default-title
