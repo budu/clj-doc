@@ -96,13 +96,13 @@
   (str (name k) "s"))
 
 (defn gen-section
-  "Generates a section given a type and a sequence of vars."
-  [namespace type vars]
+  "Generates a section given a section name and a sequence of vars."
+  [namespace section vars]
   (let [content (apply str (map gen-var-doc vars))]
     (str
-      (gen-when :anchor namespace (name type))
+      (gen-when :anchor namespace (name section))
       (gen-if :section
-        [ (section-title type)
+        [ (section-title section)
           (str (gen-when :section-toc vars) content) ]
         content))))
 
