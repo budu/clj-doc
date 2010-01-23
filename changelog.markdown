@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+* refactoring
+* minor improvement for all markups
+* sections and vars tables of content, only for html-simple
+
 ## 0.3.0
 
 * add some output features
