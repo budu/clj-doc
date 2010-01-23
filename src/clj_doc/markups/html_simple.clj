@@ -33,12 +33,25 @@
   (apply str "I"
     (map encode-id-char (str s))))
 
+(defn- html-anchor
+  "Generator for html's anchors."
+  [& parts]
+  (html [:a {:id (encode-id (apply str (interpose "." parts)))}]))
+
 (defn- html-page-toc
   "Generator of the table of content for the whole page."
   [nss]
-  (html [:div#ns-toc
+  (html [:div#page-toc
           (interpose ", "
             (map #(html (link-to (str "#" (encode-id %)) %)) nss))]))
+
+(defn- html-ns-toc
+  "Generator of the table of content for the whole page."
+  [namespace sections]
+  (html [:div.ns-toc
+          (interpose ", "
+            (map #(let [n (name %)]
+                    (link-to (str "#" (encode-id (str namespace "." n))) n)) sections))]))
 
 (defn- html-section-toc
   "Generator of the table of content for a section."
@@ -54,8 +67,9 @@
   :page         html-simple-page
   :title        #(html [:h1 (escape-html %)])
   :page-toc     html-page-toc
-  :anchor       #(html [:a {:id (encode-id %)}])
+  :anchor       html-anchor
   :namespace    #(html [:h2 (escape-html %)])
+  :ns-toc       html-ns-toc
   :section-toc  html-section-toc
   :section      #(html [:h3 (escape-html %1)] [:div %2])
   :var-name     #(html [:h4 (escape-html %)])
