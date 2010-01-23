@@ -15,7 +15,7 @@
   (use clj-doc.markups
        compojure.html))
 
-(defn html-simple-page
+(defn- html-simple-page
   "Generator for html-simple page element."
   [title content]
   (html
@@ -24,23 +24,23 @@
       [:head [:title title]]
       [:body content]]))
 
-(defn encode-id-char [c]
+(defn- encode-id-char [c]
   (if (re-seq #"[\w-_\.]" (str c))
     c
     (str "." (int c))))
 
-(defn encode-id [s]
+(defn- encode-id [s]
   (apply str "I"
     (map encode-id-char (str s))))
 
-(defn html-ns-toc
+(defn- html-ns-toc
   "Generator the namespace table of content."
   [nss]
   (html [:div#ns-toc
           (interpose ", "
             (map #(html (link-to (str "#" (encode-id %)) %)) nss))]))
 
-(defn html-section-toc
+(defn- html-section-toc
   "Generator the section table of content."
   [vars]
   (html [:div.section-toc
