@@ -16,7 +16,7 @@
        compojure.html))
 
 (defn- html-simple-page
-  "Generator for html-simple page element."
+  "Generator for html-simple pages."
   [title content]
   (html
     (doctype :html4)
@@ -41,7 +41,7 @@
             (map #(html (link-to (str "#" (encode-id %)) %)) nss))]))
 
 (defn- html-section-toc
-  "Generator the section table of content."
+  "Generator of the table of content for a section."
   [vars]
   (html [:div.section-toc
           (interpose ", "
