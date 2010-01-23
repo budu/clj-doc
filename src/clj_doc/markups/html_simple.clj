@@ -59,7 +59,7 @@
   (html [:div.section-toc
           (interpose ", "
             (map #(let [n (escape-html (name (.sym %)))]
-                    html (link-to (str "#" (encode-id n)) n)) vars))]))
+                    (link-to (str "#" (encode-id n)) n)) vars))]))
 
 (defmarkup
   #^{:doc "Simple HTML markup."}
