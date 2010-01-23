@@ -91,7 +91,7 @@
       (gen :var-doc (or d "No documentation found.")))))
 
 (defn section-title
-  "Returns the given keyword name pluralized."
+  "Returns the given keyword's name pluralized."
   [k]
   (str (name k) "s"))
 
