@@ -38,28 +38,27 @@
   [& parts]
   (html [:a {:id (encode-id (apply str (interpose "." parts)))}]))
 
+(defn- toc
+  "Generic table of content generator."
+  [name-fn id-fn coll]
+  (interpose ", "
+    (map #(let [n (name-fn %)]
+            (link-to (str "#" (encode-id (id-fn n))) n)) coll)))
+
 (defn- page-toc
   "Generator of the table of content for the whole page."
   [nss]
-  (html [:div#page-toc
-          (interpose ", "
-            (map #(html (link-to (str "#" (encode-id %)) %)) nss))]))
+  (html [:div#page-toc (toc identity identity nss)]))
 
 (defn- ns-toc
   "Generator of the table of content for the whole page."
   [namespace sections]
-  (html [:div.ns-toc
-          (interpose ", "
-            (map #(let [n (name %)]
-                    (link-to (str "#" (encode-id (str namespace "." n))) n)) sections))]))
+  (html [:div.ns-toc (toc name #(str namespace "." %) sections)]))
 
 (defn- section-toc
   "Generator of the table of content for a section."
   [vars]
-  (html [:div.section-toc
-          (interpose ", "
-            (map #(let [n (escape-html (name (.sym %)))]
-                    (link-to (str "#" (encode-id n)) n)) vars))]))
+  (html [:div.section-toc (toc #(name (.sym %)) identity vars)]))
 
 (defmarkup
   #^{:doc "Simple HTML markup."}
