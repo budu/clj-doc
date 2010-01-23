@@ -15,15 +15,6 @@
   (use clj-doc.markups
        compojure.html))
 
-(defn- html-simple-page
-  "Generator for html-simple pages."
-  [title content]
-  (html
-    (doctype :html4)
-    [:html
-      [:head [:title title]]
-      [:body content]]))
-
 (defn- encode-id-char [c]
   (if (re-seq #"[\w-_\.]" (str c))
     c
@@ -33,19 +24,28 @@
   (apply str "I"
     (map encode-id-char (str s))))
 
-(defn- html-anchor
+(defn- page
+  "Generator for html-simple pages."
+  [title content]
+  (html
+    (doctype :html4)
+    [:html
+      [:head [:title title]]
+      [:body content]]))
+
+(defn- anchor
   "Generator for html's anchors."
   [& parts]
   (html [:a {:id (encode-id (apply str (interpose "." parts)))}]))
 
-(defn- html-page-toc
+(defn- page-toc
   "Generator of the table of content for the whole page."
   [nss]
   (html [:div#page-toc
           (interpose ", "
             (map #(html (link-to (str "#" (encode-id %)) %)) nss))]))
 
-(defn- html-ns-toc
+(defn- ns-toc
   "Generator of the table of content for the whole page."
   [namespace sections]
   (html [:div.ns-toc
@@ -53,7 +53,7 @@
             (map #(let [n (name %)]
                     (link-to (str "#" (encode-id (str namespace "." n))) n)) sections))]))
 
-(defn- html-section-toc
+(defn- section-toc
   "Generator of the table of content for a section."
   [vars]
   (html [:div.section-toc
@@ -64,13 +64,13 @@
 (defmarkup
   #^{:doc "Simple HTML markup."}
   html-simple
-  :page         html-simple-page
+  :page         page
   :title        #(html [:h1 (escape-html %)])
-  :page-toc     html-page-toc
-  :anchor       html-anchor
+  :page-toc     page-toc
+  :anchor       anchor
   :namespace    #(html [:h2 (escape-html %)])
-  :ns-toc       html-ns-toc
-  :section-toc  html-section-toc
+  :ns-toc       ns-toc
+  :section-toc  section-toc
   :section      #(html [:h3 (escape-html %1)] [:div %2])
   :var-name     #(html [:h4 (escape-html %)])
   :var-arglist  #(html [:span (escape-html %)] [:br])
