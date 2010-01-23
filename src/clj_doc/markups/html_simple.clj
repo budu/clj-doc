@@ -33,8 +33,8 @@
   (apply str "I"
     (map encode-id-char (str s))))
 
-(defn- html-ns-toc
-  "Generator the namespace table of content."
+(defn- html-page-toc
+  "Generator of the table of content for the whole page."
   [nss]
   (html [:div#ns-toc
           (interpose ", "
@@ -53,7 +53,7 @@
   html-simple
   :page         html-simple-page
   :title        #(html [:h1 (escape-html %)])
-  :ns-toc       html-ns-toc
+  :page-toc     html-page-toc
   :anchor       #(html [:a {:id (encode-id %)}])
   :namespace    #(html [:h2 (escape-html %)])
   :section-toc  html-section-toc

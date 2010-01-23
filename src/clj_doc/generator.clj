@@ -128,7 +128,7 @@
         content (apply str
                   (gen :title title)
                   (when (> (count nss) 1)
-                    (gen-when :ns-toc nss))
+                    (gen-when :page-toc nss))
                   (map gen-namespace-doc nss))]
     (gen-if :page
       [title content]
