@@ -24,8 +24,10 @@
   must be enclosed within an with-markup call."
   [options & nss]
   (let [{:keys [separated-by]} options
-        nss (if (= separated-by 'namespace) (flatten nss) nss)]
-    (doall (map gen-page nss))))
+        nss (if (= separated-by 'namespace)
+              (flatten nss)
+              nss)]
+    (zipmap nss (map gen-page nss))))
 
 (defmacro with-markup
   "Makes the given markup the current one."
@@ -48,25 +50,26 @@
     [ options namespaces ]))
 
 (defmacro gen-doc
-  "Returns a string containing the documentation for the namespaces
-  given formatted with the specified markup if available. The default
-  output is formatted in HTML."
+  "Returns a map of strings containing the documentation for the
+  namespaces given formatted with the specified markup if
+  available. Namespaces can be specified with symbols, sequences of
+  symbols or regular expressions. The returned map is keyed by lists of
+  resolved namespace symbols. The default output format is HTML."
   [& options-namespaces]
   (let [[options namespaces] (parse-options-namespaces
                                options-namespaces)
         {:keys [markup]} options
         generate `(gen-doc* ~(quasiquote* options)
                     ~@(map #(list 'quote %) namespaces))]
-    `(->str
-       ~(if markup
-          `(with-markup ~markup ~generate)
-          generate))))
+    (if markup
+      `(with-markup ~markup ~generate)
+      generate)))
 
 (defmacro gen-doc-to-file
   "Same as gen-doc but output the documentation to the specified
   file(s)."
   [fmt & options-namespaces]
-  `(let [results# (gen-doc ~@options-namespaces)]
+  `(let [results# (vals (gen-doc ~@options-namespaces))]
      (if (= 1 (count results#))
        (spit ~fmt (first results#))
        (doseq [[i# page#] (zipmap (iterate inc 0) results#)]
