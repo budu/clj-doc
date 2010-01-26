@@ -63,11 +63,11 @@
           generate))))
 
 (defmacro gen-doc-to-file
-  "Same as gen-doc but output the documentation to the specified file."
-  [filename & options-namespaces]
+  "Same as gen-doc but output the documentation to the specified
+  file(s)."
+  [fmt & options-namespaces]
   `(let [results# (gen-doc ~@options-namespaces)]
      (if (= 1 (count results#))
-       (spit ~filename (first results#))
-       (doseq [[filename# page#]
-                (zipmap (numbered-filenames ~filename) results#)]
-         (spit filename# page#)))))
+       (spit ~fmt (first results#))
+       (doseq [[i# page#] (zipmap (iterate inc 0) results#)]
+         (spit (append-to-filename ~fmt i#) page#)))))

@@ -22,12 +22,6 @@
     (re-gsub #"(\.)([^\.]*$)" (str obj ".$2") filename)
     (str filename obj)))
 
-(defn numbered-filenames
-  "Returns an infinite list of filename based on the one given, numbered
-  starting with zero."
-  [filename]
-  (map (partial append-to-filename filename) (iterate inc 0)))
-
 (defn ->str
   "Converts an object into a string or the objects contained in a
   sequence."
