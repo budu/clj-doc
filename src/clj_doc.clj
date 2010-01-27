@@ -65,12 +65,47 @@
       `(with-markup ~markup ~generate)
       generate)))
 
+(defn file-format-namespaces
+  "Turns a namespace to string and replace dots by dashes. If there's
+  more than one namespace, concatenate them separated by underscores."
+  [nss]
+  (.replace 
+    (apply str
+      (interpose "_" (if (seq? nss)
+                       nss
+                       (list nss))))
+      "." "-"))
+
+(defn file-format
+  "Replace the first occurence of %ns in the given format string by the
+  specified formatted sequence of namespaces."
+  [fmt nss]
+  (.replace fmt "%ns" nss))
+
+(defn file-format-or-append
+  "Same as file-format, but if no replacement occurs, the namespaces
+  string is appended at the end of the filename, before the extension if
+  there's one."
+  [fmt nss]
+  (let [filename (file-format fmt nss)]
+    (if (= fmt filename)
+      (append-to-filename fmt nss)
+      filename)))
+
+(defn spit-doc
+  "Helper for writing documentation to a file."
+  [fmt nss page]
+  (spit (file-format fmt (file-format-namespaces nss)) page))
+
 (defmacro gen-doc-to-file
   "Same as gen-doc but output the documentation to the specified
   file(s)."
   [fmt & options-namespaces]
-  `(let [results# (vals (gen-doc ~@options-namespaces))]
+  `(let [results# (gen-doc ~@options-namespaces)]
      (if (= 1 (count results#))
-       (spit ~fmt (first results#))
-       (doseq [[i# page#] (zipmap (iterate inc 0) results#)]
-         (spit (append-to-filename ~fmt i#) page#)))))
+       (apply spit-doc ~(if (or (empty? fmt)
+                               (dir? fmt))
+                          (str fmt "%ns") fmt) (first results#))
+       (doseq [[nss# page#] results#]
+         (spit (file-format-or-append ~fmt
+                 (file-format-namespaces nss#)) page#)))))

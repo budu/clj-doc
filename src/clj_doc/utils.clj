@@ -30,6 +30,18 @@
     (map str obj)
     (str obj)))
 
+(defn ->file
+  "If the given object is not a file, try to construct one with it."
+  [o]
+  (if (= (class o) java.io.File)
+    o
+    (java.io.File. o)))
+
+(defn dir?
+  "Check if the given argument (a string or a file) is a directory."
+  [f]
+  (.isDirectory (->file f)))
+
 (defn self-eval?
   "Check whether the given form is self-evaluating."
   [obj]
