@@ -53,11 +53,9 @@
   (let [m (meta var)]
     (cond
       (= (:tag m) clojure.lang.MultiFn) :multimethod
-      (:arglists m) (if (:macro m)
-                      :macro
-                      (if (:inline m)
-                        :inline-function
-                        :function))
+      (:arglists m) (cond (:macro m)  :macro
+                          (:inline m) :inline-function
+                          :default    :function)
       :default :other)))
 
 (defn explicit-var-type
