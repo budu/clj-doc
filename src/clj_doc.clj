@@ -27,9 +27,7 @@
         nss (if (= separated-by 'namespace)
               (flatten nss)
               nss)]
-    (zipmap nss
-      (binding [*options* options]
-        (map gen-page nss)))))
+    (zipmap nss (map (partial gen-page options) nss))))
 
 (defmacro with-markup
   "Makes the given markup the current one."

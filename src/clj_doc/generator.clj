@@ -115,20 +115,23 @@
       (map #(apply gen-section namespace %) grouped-vars))))
 
 (defn default-title
-  "Returns a nice title for a given set of arguments."
+  "Returns a nice title for a given set of arguments or the :title
+  option."
   [& args]
-  (apply str "Documentation for " (interpose ", " args)))
+  (or (:title *options*)
+      (apply str "Documentation for " (interpose ", " args))))
 
 (defn gen-page
   "Generate a documentation page given one or more namespaces."
-  [nss]
-  (let [nss (if (coll? nss) (seq nss) (list nss))
-        title (apply default-title nss)
-        content (apply str
-                  (gen :title title)
-                  (when (> (count nss) 1)
-                    (gen :page-toc nss))
-                  (map gen-namespace-doc nss))]
-    (gen-if :page
-      [title content]
-      content)))
+  [options nss]
+  (binding [*options* options]
+    (let [nss (if (coll? nss) (seq nss) (list nss))
+          title (apply default-title nss)
+          content (apply str
+                         (gen :title title)
+                         (when (> (count nss) 1)
+                           (gen :page-toc nss))
+                         (map gen-namespace-doc nss))]
+      (gen-if :page
+              [title content]
+              content))))
