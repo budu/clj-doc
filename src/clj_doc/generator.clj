@@ -41,11 +41,6 @@
       (apply gen element args)
       default)))
 
-(defn gen-when
-  "Like gen-if but returns nil if the generator isn't found."
-  [element & args]
-  (gen-if element args nil))
-
 (defn var-type
   "Like explicit-var-type but returns :other instead of var's tag or
   value class."
@@ -84,7 +79,7 @@
   (let [m (meta var)
         d (:doc  m)]
     (str
-      (gen-when :anchor (.sym var))
+      (gen :anchor (.sym var))
       (gen :var-name (gen-var-name var))
       (when (:arglists m)
         (apply str
@@ -101,10 +96,10 @@
   [namespace section vars]
   (let [content (apply str (map gen-var-doc vars))]
     (str
-      (gen-when :anchor namespace (name section))
+      (gen :anchor namespace (name section))
       (gen-if :section
         [ (section-title section)
-          (str (gen-when :section-toc vars) content) ]
+          (str (gen :section-toc vars) content) ]
         content))))
 
 (defn gen-namespace-doc
@@ -114,9 +109,9 @@
   (let [vars (vals (ns-interns (symbol namespace)))
         grouped-vars (group-by var-type vars)]
     (apply str
-      (gen-when :anchor namespace)
+      (gen :anchor namespace)
       (gen :namespace (str namespace " namespace"))
-      (gen-when :ns-toc namespace (keys grouped-vars))
+      (gen :ns-toc namespace (keys grouped-vars))
       (map #(apply gen-section namespace %) grouped-vars))))
 
 (defn default-title
@@ -132,7 +127,7 @@
         content (apply str
                   (gen :title title)
                   (when (> (count nss) 1)
-                    (gen-when :page-toc nss))
+                    (gen :page-toc nss))
                   (map gen-namespace-doc nss))]
     (gen-if :page
       [title content]
