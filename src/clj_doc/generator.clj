@@ -22,6 +22,9 @@
 (def #^{:doc "The markup currently used by clj-doc."}
   *current-markup* default-markup)
 
+(def #^{:doc "The options currently used by clj-doc."}
+  *options* {})
+
 (defn gen
   "Generates the specified element with the given arguments passed to
   the corresponding generator taken from the *current-markup* map."
