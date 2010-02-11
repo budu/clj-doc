@@ -14,10 +14,11 @@
   "This namespace contains all parts to make a generic documentation
   generator for Clojure code."
   (use [clojure.contrib seq-utils]
+       clj-doc.markups.html-simple
        clj-doc.utils))
 
 (def #^{:doc "The default markup to be used if none specified."}
-  default-markup clj-doc.markups.html-simple/html-simple)
+  default-markup html-simple)
 
 (def #^{:doc "The markup currently used by clj-doc."}
   *current-markup* default-markup)
