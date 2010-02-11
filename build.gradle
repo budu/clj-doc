@@ -14,7 +14,7 @@ buildscript {
 usePlugin(clojuresque.ClojurePlugin)
 
 group = 'clj-doc'
-version = '0.5.0'
+version = '0.6.0'
 
 sourceSets {
     main {
