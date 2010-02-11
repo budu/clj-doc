@@ -102,27 +102,32 @@
                (some #(= t %) sections)) t :other)
       t)))
 
-(defn- group-vars
-  "Groups vars into sections according to the current :sections option
-  if present. Returns the vars grouped in a map."
-  [vars]
-  (let [grouped-vars (group-by (comp in-or-other var-type) vars)]
-    (if-let [only-sections (:only-sections *options*)]
-      (select-keys grouped-vars only-sections)
-      grouped-vars)))
+(defn get-sections-order
+  []
+  (let [sections (or (:only-sections *options*)
+                     (:sections *options*))]
+    (cond (= sections :none) nil
+          (:sections *options*) (conj (vec sections) :other)
+          :default sections)))
 
 (defn gen-namespace-doc
   "Generates documentation for the given namespace."
   [namespace]
   (require (symbol namespace))
   (let [vars (vals (ns-interns (symbol namespace)))
-        grouped-vars (group-vars vars)]
+        grouped-vars (group-by (comp in-or-other var-type) vars)
+        sections (or (get-sections-order) (keys grouped-vars))]
     (apply str
       (gen :anchor namespace)
       (gen :namespace (str namespace " namespace"))
-      (when (> (count grouped-vars) 1)
-        (gen :ns-toc namespace (keys grouped-vars)))
-      (map #(apply gen-section namespace %) grouped-vars))))
+      (when (> (count sections) 1)
+        (gen :ns-toc namespace sections))
+      (if sections
+        (map #(gen-section namespace % (grouped-vars %))
+             (if (:sections *options*)
+               (conj (vec sections) :other)
+               sections))
+        (map #(apply gen-section namespace %) grouped-vars)))))
 
 (defn default-title
   "Returns a nice title for a given set of arguments or the :title
