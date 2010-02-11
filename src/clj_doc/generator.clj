@@ -105,12 +105,14 @@
 (defn- in-or-other
   "Returns its given argument if there's no sections options. Takes the
   type of section given and returns it if it's found in :only-sections
-  or :sections option, else returns :other."
+  or :sections option, else returns :other. Also, if :sections is not a
+  collection, always returns :other."
   [t]
   (let [sections (or (:only-sections *options*)
                      (:sections *options*))]
     (if sections
-      (if (some #(= t %) sections) t :other)
+      (if (and (coll? sections) ; the only possibility is :none for now
+               (some #(= t %) sections)) t :other)
       t)))
 
 (defn- group-vars
@@ -131,7 +133,8 @@
     (apply str
       (gen :anchor namespace)
       (gen :namespace (str namespace " namespace"))
-      (gen :ns-toc namespace (keys grouped-vars))
+      (when (> (count grouped-vars) 1)
+        (gen :ns-toc namespace (keys grouped-vars)))
       (map #(apply gen-section namespace %) grouped-vars))))
 
 (defn default-title
