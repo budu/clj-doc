@@ -102,16 +102,25 @@
           (str (gen :section-toc vars) content) ]
         content))))
 
-(defn group-vars
+(defn- in-or-other
+  "Returns its given argument if there's no sections options. Takes the
+  type of section given and returns it if it's found in :only-sections
+  or :sections option, else returns :other."
+  [t]
+  (let [sections (or (:only-sections *options*)
+                     (:sections *options*))]
+    (if sections
+      (if (some #(= t %) sections) t :other)
+      t)))
+
+(defn- group-vars
   "Groups vars into sections according to the current :sections option
   if present. Returns the vars grouped in a map."
   [vars]
-  (if-let [sections (:sections *options*)]
-    (group-by (fn [v]
-                (let [t (var-type v)]
-                  (if (some #(= t %) sections) t :other)))
-              vars)
-    (group-by var-type vars)))
+  (let [grouped-vars (group-by (comp in-or-other var-type) vars)]
+    (if-let [only-sections (:only-sections *options*)]
+      (select-keys grouped-vars only-sections)
+      grouped-vars)))
 
 (defn gen-namespace-doc
   "Generates documentation for the given namespace."
