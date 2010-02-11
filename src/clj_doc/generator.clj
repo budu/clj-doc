@@ -46,13 +46,16 @@
   Supports the following keywords: :function, :inline-function, :macro
   and :multimethod."
   [var]
-  (let [m (meta var)]
-    (cond
-      (= (:tag m) clojure.lang.MultiFn) :multimethod
-      (:arglists m) (cond (:macro m)  :macro
-                          (:inline m) :inline-function
-                          :default    :function)
-      :default :other)))
+  (let [m (meta var)
+        t (cond
+            (= (:tag m) clojure.lang.MultiFn) :multimethod
+            (:arglists m) (cond (:macro m)    :macro
+                                (:inline m)   :inline-function
+                                :default      :function)
+            :default                          :other)]
+    (if (:private m)
+      (keyword (str "private-" (name t)))
+      t)))
 
 (defn gen-var-name
   "Generate a qualified var name."
@@ -78,7 +81,7 @@
 (defn section-title
   "Returns the given keyword's name pluralized."
   [k]
-  (str (name k) "s"))
+  (.replace (str (name k) "s") "-" " "))
 
 (defn gen-section
   "Generates a section given a section name and a sequence of vars."
