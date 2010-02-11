@@ -42,8 +42,9 @@
       default)))
 
 (defn var-type
-  "Like explicit-var-type but returns :other instead of var's tag or
-  value class."
+  "Returns a keyword identifying what kind of var is the one given.
+  Supports the following keywords: :function, :inline-function, :macro
+  and :multimethod."
   [var]
   (let [m (meta var)]
     (cond
@@ -52,18 +53,6 @@
                           (:inline m) :inline-function
                           :default    :function)
       :default :other)))
-
-(defn explicit-var-type
-  "Returns a keyword identifying what kind of var is the one given, else
-  its tag or if missing the class of its value. Supports the following
-  keywords: :function, :inline-function, :macro and :multimethod."
-  [var]
-  (let [m (meta var)
-        t (var-type var)]
-    (cond
-      (not= t :other) t
-      (:tag m) (:tag m)
-      :default (class (var-get var)))))
 
 (defn gen-var-name
   "Generate a qualified var name."
