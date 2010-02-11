@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+* make gen-doc-to-file first argument a format string for multiple page output
+* add some options: :title, :sections, :only-sections
+* separate private var in their own sections
+
 ## 0.4.0
 
 * refactoring
