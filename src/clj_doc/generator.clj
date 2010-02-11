@@ -102,12 +102,22 @@
           (str (gen :section-toc vars) content) ]
         content))))
 
+(defn group-vars
+  "Groups vars into sections according to the current :sections option
+  if present. Returns the vars grouped in a map."
+  [vars]
+  (if-let [sections (:sections *options*)]
+    (group-by (fn [v]
+                (let [t (var-type v)]
+                  (if (some #(= t %) sections) t :other)))
+              vars)))
+
 (defn gen-namespace-doc
   "Generates documentation for the given namespace."
   [namespace]
   (require (symbol namespace))
   (let [vars (vals (ns-interns (symbol namespace)))
-        grouped-vars (group-by var-type vars)]
+        grouped-vars (group-vars vars)]
     (apply str
       (gen :anchor namespace)
       (gen :namespace (str namespace " namespace"))
