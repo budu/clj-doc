@@ -13,6 +13,7 @@
 (ns clj-doc.markups.html-simple
   "Simple HTML markup."
   (use clj-doc.markups
+       clj-doc.utils
        compojure.html))
 
 (defn- encode-id-char [c]
@@ -53,7 +54,7 @@
 (defn- ns-toc
   "Generator of the table of content for the whole page."
   [namespace sections]
-  (html [:div.ns-toc (toc name #(str namespace "." %) sections)]))
+  (html [:div.ns-toc (toc to-title #(str namespace "." %) sections)]))
 
 (defn- section-toc
   "Generator of the table of content for a section."

@@ -14,10 +14,10 @@
   "This namespace contains all parts to make a generic documentation
   generator for Clojure code."
   (use [clojure.contrib seq-utils]
-       clj-doc.markups.html-simple))
+       clj-doc.utils))
 
 (def #^{:doc "The default markup to be used if none specified."}
-  default-markup html-simple)
+  default-markup clj-doc.markups.html-simple/html-simple)
 
 (def #^{:doc "The markup currently used by clj-doc."}
   *current-markup* default-markup)
@@ -78,20 +78,15 @@
           (map (partial gen :var-arglist) (:arglists m))))
       (gen :var-doc (or d "No documentation found.")))))
 
-(defn section-title
-  "Returns the given keyword's name pluralized."
-  [k]
-  (.replace (str (name k) "s") "-" " "))
-
 (defn gen-section
   "Generates a section given a section name and a sequence of vars."
   [namespace section vars]
   (let [content (apply str (map gen-var-doc vars))]
     (str
-      (gen :anchor namespace (name section))
+      (gen :anchor namespace (to-title section))
       (gen-if :section
-        [ (section-title section)
-          (str (gen :section-toc vars) content) ]
+        [(to-title section)
+         (str (gen :section-toc vars) content)]
         content))))
 
 (defn- in-or-other

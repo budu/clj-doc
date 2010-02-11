@@ -86,3 +86,8 @@
   "Check if the given argument is a Pattern instance."
   [obj]
   (= (class obj) java.util.regex.Pattern))
+
+(defn to-title
+  "Returns the given keyword's name pluralized."
+  [k]
+  (.replace (str (name k) "s") "-" " "))
