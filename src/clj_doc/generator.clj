@@ -110,7 +110,8 @@
     (group-by (fn [v]
                 (let [t (var-type v)]
                   (if (some #(= t %) sections) t :other)))
-              vars)))
+              vars)
+    (group-by var-type vars)))
 
 (defn gen-namespace-doc
   "Generates documentation for the given namespace."
