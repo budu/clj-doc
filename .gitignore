@@ -1,3 +1,5 @@
+pom-generated.xml
+Manifest.txt
 *.jar
-/local.properties
-build/*
+/classes
+lib
